@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { FormModal } from '../../components/FormModal'
-import { NavLink } from 'react-router-dom'
 import { useUsuarios } from '../../hooks/configuraciones/useUsuarios'
 import { useModalStore } from '../../hooks/modal/useModalStore'
 import { HomeLayout } from '../../layouts/HomeLayout'
@@ -11,6 +9,8 @@ import { useEffect } from 'react'
 import { Agregar, Back, Editar, Eliminar, LoadingBar, Recargar } from '../../components/buttons/Buttons'
 import { SearchComponent } from '../../components/Search'
 import { Paginacion } from '../../components/paginacion/Paginacion'
+import { usePaginacion } from '../../hooks/paginacion/usePaginacion'
+import { useSearch } from '../../hooks/seach/useSearch'
 
 //import  '../../hooks/configuraciones/getRow.js'
 //import '../../styles.css'
@@ -32,16 +32,47 @@ export const Usuarios = () => {
     resetTable,
   } = useUsuarios()
 
+  const { 
+    limitePorPagina,
+     setCacheUsers,
+     resetFormFields: resetFormFieldsUsers,
+     setFormFields: setFormFieldsUsers 
+    
+    } = usePaginacion()
+
+  const { setFiltro } = useSearch()
+
   const { openModal, formModalOpen } = useModalStore()
 
   useEffect(() => {
-    getUsuarios()
-    console.log('render')
-  }, [status])
+    const cacheUsers = JSON.parse(localStorage.getItem('cacheUsers'))
+    if (!cacheUsers) {
+      localStorage.setItem(
+        'cacheUsers',
+        JSON.stringify({
+          paginaActual: '1',
+          limite: '0',
+          filtro: '',
+        }),
+      )
+    } else {
+      const { paginaActual, limite, filtro } = cacheUsers
+      setFormFieldsUsers({ paginaActual })
+      setFiltro({ filtro })
+      if (filtro.length == 0) {
+        console.log('no hay filtro')
+        getUsuarios(limite, limitePorPagina)
+      } else {
+        console.log(`si hay filtro ${filtro}`)
+        filtroUser({
+          filtro: filtro,
+          limite: limite,
+          limitePorPagina: limitePorPagina,
+        })
+      }
+    }
+  }, [])
 
-  // if (status === 'sin-data') {
-
-  // }
 
   const onOpenModal = () => {
     formModalOpen()
@@ -87,9 +118,17 @@ export const Usuarios = () => {
   }
 
   const onReset = () =>{
-    initialFormFields = {filtro: ''}
-    resetTable()
-    getUsuarios()
+    localStorage.setItem(
+      'cacheUsers',
+      JSON.stringify({
+        paginaActual: '1',
+        limite: '0',
+        filtro: '',
+      }),
+    )
+    resetFormFieldsUsers() //resetea la paginacion
+    setFiltro({ filtro: '' }) //resetea el filtro
+    getUsuarios(0, limitePorPagina)
   }
 
   const selectUserID = () => {
@@ -115,6 +154,7 @@ export const Usuarios = () => {
       <SearchComponent 
       onSearch={filtroUser}
        onReload={onReset}
+       onSetCache={setCacheUsers}
        />
 
       <div className="table-responsive">
@@ -158,7 +198,9 @@ export const Usuarios = () => {
         </table>
       </div>
       <Paginacion 
-      
+      onSearch={getUsuarios}
+      onSearchFiltro={filtroUser}
+      modulo='usuarios'
       />
     </HomeLayout>
   )

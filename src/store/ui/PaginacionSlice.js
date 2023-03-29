@@ -55,12 +55,17 @@ export const usePaginacionSlice = createSlice({
                 filtro: payload.filtro,
             }),
         )},
-        // onSetpaginacionParams: (state, { payload }) =>{
-        //     state.paginaActual = payload.paginaActual;
-        //     state.totalPaginas = payload.totalPaginas;
-        //     state.limite = payload.limiteDesde;
-        //     //state.filtro = '';
-        // },
+        onSetCacheUsers: (state, { payload }) =>{
+            const {paginaActual} = state.initialFormFields
+            localStorage.setItem(
+            'cacheUsers',
+            JSON.stringify({
+                paginaActual: paginaActual,
+                limite: state.limite,
+                filtro: payload.filtro,
+            }),
+        )},
+    
   
     }
 });
@@ -74,4 +79,5 @@ onSetFormFields,
 onResetFormFields,
 onSetCacheClientes,
 onSetCacheAutos,
+onSetCacheUsers,
 } = usePaginacionSlice.actions;

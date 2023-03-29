@@ -13,6 +13,7 @@ import {
 import { useModalStore } from "../modal/useModalStore";
 import Swal from 'sweetalert2';
 import CryptoJS from 'crypto-js';
+import { onSetTotalPaginas } from "../../store/ui/PaginacionSlice";
 
 
 export const useUsuarios = () => {
@@ -39,7 +40,7 @@ export const useUsuarios = () => {
     dispath(setUserID(null))
   }
 
-  const selectRow = ( table ) => {
+  const selectRow = (table) => {
     var table = document.getElementById(`${table}`);
 
     var selected = table.getElementsByClassName('selected');
@@ -61,7 +62,7 @@ export const useUsuarios = () => {
       var passDescrypt = bytes.toString(CryptoJS.enc.Utf8);
 
       const passConfirm = passDescrypt;
-      console.log({nombre: nombre, user: user, passEncrypt: pass, passDescrypt: passConfirm, status: status})
+      console.log({ nombre: nombre, user: user, passEncrypt: pass, passDescrypt: passConfirm, status: status })
 
       dispath(setFormFields({ nombre, user, pass: passDescrypt, passConfirm, status }))
     } catch (error) {
@@ -71,78 +72,88 @@ export const useUsuarios = () => {
     }
   }
 
-  const filtroUser = async (filtro) => {
+  const filtroUser = async ({ filtro, limite, limitePorPagina }) => {
     try {
-        //dispath(onloading())
-        const { data } = await appWebApi.get(`/usuarios/FiltroUser/${filtro}`);
-        console.log(data)
-        if(data.ok){
-            if(data.code === 4){
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                      toast.addEventListener('mouseenter', Swal.stopTimer)
-                      toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                  })
-                  Toast.fire({
-                    icon: 'info',
-                    title: 'No hay resultados con ese filtro'
-                  })
-            }else{
-                resetTable()
-                dispath(onLoadingUsuarios(data.results))
-                //dispath(onLoadingClientes(data.results))
+      //dispath(onloading())
+      const { data } = await appWebApi.post(`/usuarios/FiltroUser/${filtro}`,
+        { limite, limitePorPagina });
+      console.log(data)
+      if (data.ok) {
+        if (data.code === 4) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
-        }else{
-            Swal.fire({
-                icon: 'error',title: 'Oops...', text: data
-            })
-            return
+          })
+          Toast.fire({
+            icon: 'info',
+            title: 'No hay resultados con ese filtro'
+          })
+        } else {
+          resetTable()
+          dispath(onLoadingUsuarios(data.results))
+
+          const amount = data.amount[0].amount;
+          let cant = (amount / limitePorPagina);
+          let pags = Math.ceil(cant);
+          dispath(onSetTotalPaginas(pags))
         }
-    } catch (error) {
-        console.log('error!!');
-        console.log(error);
-        dispath(onError(error))
+      } else {
         Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: error.message
+          icon: 'error', title: 'Oops...', text: data
         })
         return
-    }
-}
-
-  const resetFormFieldsUSer = () => {
-    dispath(resetFormFields())
-  }
-
-  const getUsuarios = async () => {
-
-    try {
-      dispath(onloading(true))
-      const { data } = await appWebApi.get('/usuarios/getUsers');
-      dispath(onLoadingUsuarios(data.results))
-      //dispath(onLoaded())
-
+      }
     } catch (error) {
       console.log('error!!');
       console.log(error);
       dispath(onError(error))
       Swal.fire({
         icon: 'error',
-        title: 'Oops...',
-        text: error.message
+        title: `Oops...${error.message}`,
+        text: `${JSON.stringify(error.response.data)}`
       })
       return
     }
   }
 
-  const registerUser = async (nombre, user, pass, passConfirm, status) => {
+  const resetFormFieldsUSer = () => {
+    dispath(resetFormFields())
+  }
+
+  const getUsuarios = async (limite, limitePorPagina) => {
+
+    try {
+      resetTable()
+      dispath(onloading(true))
+      const { data } = await appWebApi.post('/usuarios/getUsers',
+        { limite, limitePorPagina });
+      dispath(onLoadingUsuarios(data.results))
+
+      const amount = data.amount[0].amount;
+      let cant = (amount / limitePorPagina);
+      let pags = Math.ceil(cant);
+      dispath(onSetTotalPaginas(pags))
+    } catch (error) {
+      console.log('error!!');
+      console.log(error);
+      dispath(onError(error))
+      Swal.fire({
+        icon: 'error',
+        title: `Oops...${error.message}`,
+        text: `${JSON.stringify(error.response.data)}`
+      })
+      return
+    }
+  }
+
+  const registerUser = async (nombre, user, pass, passConfirm, status, limite, limitePorPagina) => {
     try {
       const { data } = await appWebApi.post('/usuarios/registroUsuario', { nombre, user, pass, passConfirm, status });
       if (data.ok) {
@@ -170,14 +181,6 @@ export const useUsuarios = () => {
               console.log({ status: !status });
               //dispath(setFormFields({nombre, user, pass, passConfirm: pass, status}))
               updateStatusUser({ user_id: user_id, status: !status })
-              // getUsuarios()
-
-              // closeModal();
-              // Swal.fire(
-              //   'Listo!',
-              //   'Usuario recuperado',
-              //   'success'
-              // )
             }
           })
 
@@ -190,7 +193,7 @@ export const useUsuarios = () => {
             showConfirmButton: false,
             timer: 1500
           })
-          getUsuarios();
+          getUsuarios(limite, limitePorPagina);
           closeModal();
         }
 
@@ -211,11 +214,11 @@ export const useUsuarios = () => {
     }
   }
 
-  const updateStatusUser = async ({ user_id, status }) => {
+  const updateStatusUser = async ({ user_id, status, limite, limitePorPagina }) => {
     try {
       const { data } = await appWebApi.put(`/usuarios/updateStatusUser/${user_id}`, { status })
       console.log({ data });
-      if(data.ok){
+      if (data.ok) {
         Swal.fire({
           position: 'top-end',
           icon: 'success',
@@ -223,11 +226,11 @@ export const useUsuarios = () => {
           showConfirmButton: false,
           timer: 1500
         })
-        
-       closeModal();
-        resetTable()
-        getUsuarios();
-      }else{
+
+        closeModal();
+        //resetTable()
+        getUsuarios(limite, limitePorPagina);
+      } else {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -250,7 +253,7 @@ export const useUsuarios = () => {
     try {
       const { data } = await appWebApi.put(`/usuarios/updateStatusUser/${user_id}`, { status })
       console.log({ data });
-      if(data.ok){
+      if (data.ok) {
         Swal.fire({
           position: 'top-end',
           icon: 'success',
@@ -260,7 +263,7 @@ export const useUsuarios = () => {
         })
         resetTable()
         getUsuarios();
-      }else{
+      } else {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -279,10 +282,10 @@ export const useUsuarios = () => {
     }
   }
 
-  const updateUser = async({user_id, nombre, user, pass, status}) => {
+  const updateUser = async ({ user_id, nombre, user, pass, status, limite, limitePorPagina }) => {
     try {
-      const { data } = await appWebApi.put(`/usuarios/updateUser/${user_id}`, {nombre, user, pass, status});
-      if(data.ok){
+      const { data } = await appWebApi.put(`/usuarios/updateUser/${user_id}`, { nombre, user, pass, status });
+      if (data.ok) {
         isEditUser(false)
         Swal.fire({
           position: 'top-end',
@@ -291,10 +294,10 @@ export const useUsuarios = () => {
           showConfirmButton: false,
           timer: 1500
         })
-        resetTable()
-        getUsuarios();
+       // resetTable()
+        getUsuarios(limite, limitePorPagina);
         closeModal();
-      }else{
+      } else {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -313,7 +316,7 @@ export const useUsuarios = () => {
     }
   }
 
-  const resetTable = () =>{
+  const resetTable = () => {
     dispath(onResetData())
   }
   const isEditUser = (opt) => {

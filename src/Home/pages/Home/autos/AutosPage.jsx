@@ -192,7 +192,7 @@ export const AutosPage = () => {
 
       <Paginacion
         onSearch={getAutos}
-        //onSearchFiltro{}
+        onSearchFiltro={filtroAutos}
         modulo="autos"
       />
     </HomeLayout>

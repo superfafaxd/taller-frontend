@@ -4,6 +4,7 @@ import { useForm } from "../../hooks/useForm";
 import 'animate.css';
 import { useUsuarios } from "../../hooks/configuraciones/useUsuarios";
 import { useSelector } from "react-redux";
+import { usePaginacion } from "../../hooks/paginacion/usePaginacion";
 
 /* const initialFormFields = {
     nombre: '',
@@ -24,6 +25,7 @@ const formValidations = {
 export const FormUsers = () => {
     const { initialFormFields, isEdit, userID } = useSelector(state => state.usuariosData)
     const { closeModal } = useModalStore();
+  const { limite, limitePorPagina } = usePaginacion()
     const { formState, nombre, user, pass, passConfirm, status, onInputChange,
         isFormValid, nombreValid, userValid, passValid, passConfirmValid
 
@@ -44,7 +46,7 @@ export const FormUsers = () => {
         event.preventDefault()
         seterror(null)
         if (!isFormValid) {
-            console.log({ nombreValid, userValid, passValid, passConfirmValid })
+            console.log({ nombreValid, userValid, passValid, passConfirmValid, limite, limitePorPagina })
             return
         }
         if (pass != passConfirm) {
@@ -58,7 +60,7 @@ export const FormUsers = () => {
         } else {
             console.log('update')
             //console.log({user_id: userID, nombre, user, pass, passConfirm, status})
-            updateUser({user_id: userID, nombre, user, pass, status})
+            updateUser({user_id: userID, nombre, user, pass, status, limite, limitePorPagina})
             //isEditUser(false)
         }
         resetFormFieldsUSer()

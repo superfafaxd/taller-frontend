@@ -114,8 +114,8 @@ export const useAutos = () => {
             dispath(onError(error))
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: error.message
+                title: `Oops...${error.message}`,
+                text: `${JSON.stringify(error.response.data)}`
             })
             return
         }

@@ -6,9 +6,9 @@ import {
     onResetLimite,
     onSetCacheClientes,
     onSetLimite,
-    onSetCacheAutos
+    onSetCacheAutos,
+    onSetCacheUsers
 } from "../../store/ui/PaginacionSlice"
-import { useClientes } from "../home/useClientes"
 
 
 export const usePaginacion = () => {
@@ -47,6 +47,10 @@ export const usePaginacion = () => {
     const setCacheAutos = ({filtro}) => {
         dispath(onSetCacheAutos({filtro}))
     }
+
+    const setCacheUsers = ({filtro}) =>{
+        dispath(onSetCacheUsers({filtro}))
+    }
     const calcularpaginas = ({paginaActual}) =>{
         //const {paginaActual} = state.initialFormFields
         let limiteHasta = (paginaActual * 10)
@@ -69,5 +73,6 @@ export const usePaginacion = () => {
         setCacheClientes,
         setCacheAutos,
         calcularpaginas,
+        setCacheUsers
     }
 }

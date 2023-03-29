@@ -25,6 +25,7 @@ export const Paginacion = ({
     setCacheClientes,
     setCacheAutos,
     calcularpaginas,
+    setCacheUsers
   } = usePaginacion()
 
   const { formState, paginaActual, onInputChange } = useForm(initialFormFields)
@@ -40,12 +41,13 @@ export const Paginacion = ({
       case 'clientes':
         setCacheClientes({ filtro: filtro.filtro })
         break
-
       case 'autos':
         console.log('autos')
         setCacheAutos({ filtro: filtro.filtro })
-     
         break
+        case 'usuarios':
+          console.log('usuaros')
+          setCacheUsers({ filtro: filtro.filtro })
       default:
         break
     }
@@ -83,7 +85,6 @@ export const Paginacion = ({
     } else {
       //console.log(filtro.filtro)
       setFormFields({ paginaActual }) //pone en el store la pagina actual
-
       console.log('paginacion')
       // onSearch({ paginaActual, modulo }) //con esto busca
 
