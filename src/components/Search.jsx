@@ -13,25 +13,30 @@ export const SearchComponent = ({
   onSearch = () => {
     console.log('buscando...')
   },
-  onReload = () =>{
-    console.log('reset...');
+  onReload = () => {
+    console.log('reset...')
   },
   onSetCache = () => {
     console.log('set cache')
   },
-  text = 'Filtro por Nombre/ID'
+  text = 'Filtro por Nombre/ID',
   // resetTable = () => {},
   // calcularPagina = () => {},
   // modulo = '',
   // resetLocalStorage = () =>{}
 }) => {
- 
-  const { initialFormFields } = useSelector(state => state.search)
-  const { setFiltro } = useSearch();
+  const { initialFormFields } = useSelector((state) => state.search)
+  const { setFiltro, validField } = useSearch()
   const { formState, filtro, onInputChange } = useForm(initialFormFields)
   const [isDisable, setIsDisable] = useState(true)
 
-  const {  limite, limitePorPagina, resetLimite, resetFormFields, setCacheClientes } = usePaginacion()
+  const {
+    limite,
+    limitePorPagina,
+    resetLimite,
+    resetFormFields,
+    setCacheClientes,
+  } = usePaginacion()
 
   useEffect(() => {
     if (filtro.length >= 1) {
@@ -43,32 +48,29 @@ export const SearchComponent = ({
 
   const filtrar = (event) => {
     event.preventDefault()
-    
-    if(filtro.length >= 1){
-      //resetLimite()
+    const filtroTrim = filtro.trim()
+    if (filtroTrim.length >= 1) {
       resetFormFields() //resetea la paginacion
-      setFiltro({filtro})
-      onSetCache({filtro})
-     
-      //console.log({filtro,  limite : 0, limitePorPagina})
-      onSearch({filtro,  limite: 0, limitePorPagina})
-    }else{
-      
+      setFiltro({filtro: filtroTrim})
+      onSetCache({filtro: filtroTrim})
+
+      // //console.log({filtro,  limite : 0, limitePorPagina})
+       onSearch({filtro: filtroTrim,  limite: 0, limitePorPagina})
+    } else {
       onReload()
     }
-   
   }
 
   return (
-    <form onSubmit={filtrar} >
+    <form onSubmit={filtrar}>
       <div className="d-flex form-group mb-2 gap-2">
         <input
           type="text"
           className=" form-control"
           placeholder={text}
-         // required
+          // required
           autoComplete="off"
-          
+          id="filtro"
           name="filtro"
           value={filtro}
           onChange={onInputChange}

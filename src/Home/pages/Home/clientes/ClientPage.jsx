@@ -156,7 +156,6 @@ export const ClientPage = () => {
       <Back path="/" text="Clientes" />
 
       <div className="col">
-        {' '}
         {/* botones */} {/* ----------BOTONES---------- */}
         <Agregar onOpenModal={onOpenModal} />
         <Editar onEdit={onEditClient} />
@@ -171,7 +170,6 @@ export const ClientPage = () => {
       />
 
       <div className="table-responsive gg">
-        {/* {isLoading ? <LoadingBar isLoading={isLoading} /> : <></>}  */}
 
         <LoadingBar isLoading={isLoading} />
         <table

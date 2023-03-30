@@ -8,6 +8,7 @@ import {
   LoadingBar,
   Recargar,
 } from '../../../../components/buttons/Buttons'
+import { Paginacion } from '../../../../components/paginacion/Paginacion'
 import { SearchComponent } from '../../../../components/Search'
 import { HomeLayout } from '../../../../layouts/HomeLayout'
 
@@ -59,6 +60,8 @@ export const ServiciosPage = () => {
           </thead>
         </table>
       </div>
+
+      <Paginacion />
      
     </HomeLayout>
    

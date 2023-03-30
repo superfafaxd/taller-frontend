@@ -157,7 +157,7 @@ export const Usuarios = () => {
        onSetCache={setCacheUsers}
        />
 
-      <div className="table-responsive">
+      <div className="table-responsive gg">
         {/* <div>{isLoading ? <CheckLoading /> : <> </>}</div> */}
         <LoadingBar isLoading={isLoading} />
 
