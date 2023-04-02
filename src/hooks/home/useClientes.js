@@ -249,20 +249,6 @@ export const useClientes = () => {
         dispath(setCliID(null))
     }
 
-    const setCacheClientes =  ({ paginaActual, limite, filtro}) =>{
-        console.log({ paginaActual, limite, filtro})
-        localStorage.setItem(
-            'cacheCliente',
-            JSON.stringify({
-                paginaActual: paginaActual,
-                limite: limite,
-                filtro: filtro,
-            }),
-        )
-
-
-    }
-
     const resetLocalStorage = () =>{
         localStorage.setItem(
             'cacheCliente',

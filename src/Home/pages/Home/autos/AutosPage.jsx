@@ -40,6 +40,7 @@ export const AutosPage = () => {
     isEditCar,
     getCarByID,
     deleteCar,
+    setAutoIdStore
   } = useAutos()
   const { openModal, formModalAutos } = useModalStore()
 
@@ -96,7 +97,8 @@ export const AutosPage = () => {
     openModal()
   }
 
-  const onDeleteAuto = () => {
+  const onDeleteAuto = (autoID) => {
+    setAutoIdStore(autoID)
     if (autoID == null) {
       Swal.fire({
         icon: 'warning',
@@ -122,7 +124,8 @@ export const AutosPage = () => {
     })
   }
 
-  const onEditAuto = () => {
+  const onEditAuto = (autoID) => {
+    setAutoIdStore(autoID)
     if (autoID == null) {
       Swal.fire({
         icon: 'warning',
@@ -141,8 +144,8 @@ export const AutosPage = () => {
       <Back path="/" text="Autos" />
       <div className="col">
         <Agregar onOpenModal={onOpenModal} />
-        <Editar onEdit={onEditAuto} />
-        <Eliminar onDelete={onDeleteAuto} />
+      {/*   <Editar onEdit={onEditAuto} />
+        <Eliminar onDelete={onDeleteAuto} /> */}
         <Recargar onReload={onReset} />
       </div>
 
@@ -158,22 +161,23 @@ export const AutosPage = () => {
         <table
           className="table table-bordered table-hover"
           id="tablaAutos"
-          onClick={selectAutoID}
-          onDoubleClick={onEditAuto}
+          // onClick={selectAutoID}
+          // onDoubleClick={onEditAuto}
         >
           <thead>
-            <tr>
+            <tr >
               <th scope="col">ID</th>
               <th scope="col">Auto</th>
               <th scope="col">Descripcion</th>
               <th scope="col">Cliente</th>
+              <th className='text-center'>Acciones</th>
             </tr>
           </thead>
 
           <tbody className="table-group-divider">
             {data.map((auto) => {
               return (
-                <tr key={auto.auto_id}>
+                <tr onDoubleClick={() => {onEditAuto(auto.auto_id)}} key={auto.auto_id}>
                   <td scope="row">{auto.auto_id}</td>
                   <td>
                     {auto.marca} {auto.modelo} {auto.anio}
@@ -182,6 +186,12 @@ export const AutosPage = () => {
                   <td>
                     <span className="text-dark">{`${auto.cli_id}`}</span>-
                     {`${auto.nombre}`}
+                  </td>
+                  <td style={{width: '200px'}} >
+                    <button onClick={() => {onEditAuto(auto.auto_id)}}
+                    className="btn btn-info btn-sm me-1" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">edit</span></button>
+                    <button onClick={() => { onDeleteAuto(auto.auto_id) }}
+                    className="btn btn-danger btn-sm" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">delete</span></button>
                   </td>
                 </tr>
               )

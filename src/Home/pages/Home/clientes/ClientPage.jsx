@@ -43,7 +43,7 @@ export const ClientPage = () => {
     deleteClient,
     filtroClient,
     resetTable,
-    resetLocalStorage,
+    setCliIDStore,
   } = useClientes()
 
   const { openModal, formModalClients } = useModalStore()
@@ -108,7 +108,8 @@ export const ClientPage = () => {
     formModalClients()
     openModal()
   }
-  const onDeleteClient = () => {
+  const onDeleteClient = (cliID) => {
+    setCliIDStore(cliID)
     if (cliID == null) {
       Swal.fire({
         icon: 'warning',
@@ -132,7 +133,8 @@ export const ClientPage = () => {
       }
     })
   }
-  const onEditClient = () => {
+  const onEditClient = (cliID) => {
+    setCliIDStore(cliID)
     if (cliID == null) {
       Swal.fire({
         icon: 'warning',
@@ -158,8 +160,8 @@ export const ClientPage = () => {
       <div className="col">
         {/* botones */} {/* ----------BOTONES---------- */}
         <Agregar onOpenModal={onOpenModal} />
-        <Editar onEdit={onEditClient} />
-        <Eliminar onDelete={onDeleteClient} />
+       {/*  <Editar onEdit={onEditClient} />
+        <Eliminar onDelete={onDeleteClient} /> */}
         <Recargar onReload={onReset} />
       </div>
 
@@ -175,8 +177,8 @@ export const ClientPage = () => {
         <table
           className="table table-bordered table-hover"
           id="tablaClients"
-          onClick={selectCliID}
-          onDoubleClick={onEditClient}
+          // onClick={selectCliID}
+          // onDoubleClick={onEditClient}
         >
           <thead>
             <tr>
@@ -184,6 +186,7 @@ export const ClientPage = () => {
               <th scope="col">Nombre</th>
               <th scope="col">Domicilio</th>
               <th scope="col">Celular</th>
+              <th className='text-center'>Acciones</th>
               {/*  <th scope="col">Nota</th> */}
             </tr>
           </thead>
@@ -191,11 +194,17 @@ export const ClientPage = () => {
           <tbody className="table-group-divider">
             {data.map((cli) => {
               return (
-                <tr key={cli.cli_id}>
+                <tr onDoubleClick={() => { onEditClient(cli.cli_id) }} key={cli.cli_id}>
                   <td scope="row">{cli.cli_id}</td>
                   <td>{cli.nombre}</td>
                   <td>{cli.domicilio}</td>
                   <td>{cli.celular}</td>
+                  <td style={{width: '200px'}} >
+                    <button onClick={() => { onEditClient(cli.cli_id) }}
+                    className="btn btn-info btn-sm me-1" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">edit</span></button>
+                    <button onClick={() => { onDeleteClient(cli.cli_id) }}
+                    className="btn btn-danger btn-sm" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">delete</span></button>
+                  </td>
                   {/* <td>{cli.nota}</td> */}
                 </tr>
               )

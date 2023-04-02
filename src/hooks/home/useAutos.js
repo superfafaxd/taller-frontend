@@ -250,6 +250,10 @@ export const useAutos = () => {
         }
     }
 
+    const setAutoIdStore = (autoID) =>{
+        dispath(setautoID(autoID))
+    }
+
     const resetTable = () => { dispath(onResetData()) }
 
     const isEditCar = (opt) => { dispath(onEdit(opt)) }
@@ -269,7 +273,6 @@ export const useAutos = () => {
     const setFormFieldsAuto = (formFiels) => {
         dispath(setFormFields(formFiels))
     }
-
     const setAutoData = (data) => {
         dispath(onSetAutoData(data))
     }
@@ -288,6 +291,7 @@ export const useAutos = () => {
         isEditCar,
         getCarByID,
         editAllDataCar,
-        getRowSeach
+        getRowSeach,
+        setAutoIdStore
     }
 }

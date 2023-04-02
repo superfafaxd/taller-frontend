@@ -40,6 +40,10 @@ export const useUsuarios = () => {
     dispath(setUserID(null))
   }
 
+  const setUserIDStore = (userID) => {
+    dispath(setUserID(userID))
+  }
+
   const selectRow = (table) => {
     var table = document.getElementById(`${table}`);
 
@@ -331,6 +335,7 @@ export const useUsuarios = () => {
     getUserByID,
     resetFormFieldsUSer,
     resetUserIDStore,
+    setUserIDStore,
     isEditUser,
     updateUser,
     updateStatusUser,

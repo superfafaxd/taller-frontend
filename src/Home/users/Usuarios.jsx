@@ -6,7 +6,14 @@ import { HomeLayout } from '../../layouts/HomeLayout'
 import { CheckLoading, FilaTabla } from './FilaTabla'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
-import { Agregar, Back, Editar, Eliminar, LoadingBar, Recargar } from '../../components/buttons/Buttons'
+import {
+  Agregar,
+  Back,
+  Editar,
+  Eliminar,
+  LoadingBar,
+  Recargar,
+} from '../../components/buttons/Buttons'
 import { SearchComponent } from '../../components/Search'
 import { Paginacion } from '../../components/paginacion/Paginacion'
 import { usePaginacion } from '../../hooks/paginacion/usePaginacion'
@@ -14,7 +21,7 @@ import { useSearch } from '../../hooks/seach/useSearch'
 
 //import  '../../hooks/configuraciones/getRow.js'
 //import '../../styles.css'
-let initialFormFields = {filtro: ''}
+let initialFormFields = { filtro: '' }
 export const Usuarios = () => {
   const { status, isLoading, data = [], userID } = useSelector(
     (state) => state.usuariosData,
@@ -30,15 +37,15 @@ export const Usuarios = () => {
     deleteUser,
     filtroUser,
     resetTable,
+    setUserIDStore,
   } = useUsuarios()
 
-  const { 
+  const {
     limitePorPagina,
-     setCacheUsers,
-     resetFormFields: resetFormFieldsUsers,
-     setFormFields: setFormFieldsUsers 
-    
-    } = usePaginacion()
+    setCacheUsers,
+    resetFormFields: resetFormFieldsUsers,
+    setFormFields: setFormFieldsUsers,
+  } = usePaginacion()
 
   const { setFiltro } = useSearch()
 
@@ -73,12 +80,12 @@ export const Usuarios = () => {
     }
   }, [])
 
-
   const onOpenModal = () => {
     formModalOpen()
     openModal()
   }
-  const onEditUser = () => {
+  const onEditUser = (userID) => {
+    setUserIDStore(userID)
     if (userID == null) {
       Swal.fire({
         icon: 'warning',
@@ -93,7 +100,8 @@ export const Usuarios = () => {
     getUserByID(userID)
   }
 
-  const onDeleteUser = () => {
+  const onDeleteUser = (userID) => {
+    setUserIDStore(userID)
     if (userID == null) {
       Swal.fire({
         icon: 'warning',
@@ -117,7 +125,7 @@ export const Usuarios = () => {
     })
   }
 
-  const onReset = () =>{
+  const onReset = () => {
     localStorage.setItem(
       'cacheUsers',
       JSON.stringify({
@@ -138,24 +146,20 @@ export const Usuarios = () => {
 
   return (
     <HomeLayout>
-      <Back path="/configuraciones" text='Usuarios' />
+      <Back path="/configuraciones" text="Usuarios" />
 
       <div className="col">
-
         <Agregar onOpenModal={onOpenModal} />
-
-        <Editar onEdit={onEditUser} />
-
-        <Eliminar onDelete={onDeleteUser} />
-
+        {/* <Editar onEdit={onEditUser} /> */}
+        {/* <Eliminar onDelete={onDeleteUser} /> */}
         <Recargar onReload={onReset} />
       </div>
 
-      <SearchComponent 
-      onSearch={filtroUser}
-       onReload={onReset}
-       onSetCache={setCacheUsers}
-       />
+      <SearchComponent
+        onSearch={filtroUser}
+        onReload={onReset}
+        onSetCache={setCacheUsers}
+      />
 
       <div className="table-responsive gg">
         {/* <div>{isLoading ? <CheckLoading /> : <> </>}</div> */}
@@ -164,19 +168,20 @@ export const Usuarios = () => {
         <table
           className="table table-bordered table-hover"
           id="tablaUSERS"
-          onClick={selectUserID}
-          onDoubleClick={onEditUser}
+          //onClick={selectUserID}
+          //onDoubleClick={onEditUser}
         >
           <thead>
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Usuario</th>
+              <th className='text-center'>Acciones</th>
               {/* <th scope="col">Contraseña</th> */}
             </tr>
           </thead>
           <tbody className="table-group-divider ">
-            <FilaTabla data={data} />
+            <FilaTabla data={data} onEditUser={onEditUser} onDeleteUser={onDeleteUser} />
             {/*    <tr>
                                 <th scope="row">1</th>
                                 <td>Mark</td>
@@ -197,10 +202,10 @@ export const Usuarios = () => {
           </tbody>
         </table>
       </div>
-      <Paginacion 
-      onSearch={getUsuarios}
-      onSearchFiltro={filtroUser}
-      modulo='usuarios'
+      <Paginacion
+        onSearch={getUsuarios}
+        onSearchFiltro={filtroUser}
+        modulo="usuarios"
       />
     </HomeLayout>
   )
