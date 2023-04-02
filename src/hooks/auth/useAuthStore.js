@@ -26,6 +26,11 @@ export const useAuthStore = () => {
     }
   }
 
+  const onLogout =() => {
+    dispath(logout());
+    localStorage.removeItem('loading')
+  }
+
   const checkAuth = () =>{
     dispath(checkingCredentials())
     const auth = JSON.parse(localStorage.getItem('loading'))
@@ -42,5 +47,6 @@ export const useAuthStore = () => {
     //metodos
     onLogIn,
     checkAuth,
+    onLogout,
   }
 }
