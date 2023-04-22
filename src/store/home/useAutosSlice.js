@@ -9,6 +9,7 @@ export const useAutosSlice = createSlice({
         data: [],
         errorMessage: null,
         initialFormFields: {
+            car_id: '',
             cli_id: '',
             cliente: '',
             marca: '',
@@ -43,6 +44,7 @@ export const useAutosSlice = createSlice({
         resetFormFields: (state) => {
             state.initialFormFields =
             {
+                car_id: '',
                 cli_id: '',
                 cliente: '',
                 marca: '',

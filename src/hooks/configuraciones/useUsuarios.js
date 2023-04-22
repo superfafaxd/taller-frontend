@@ -253,7 +253,7 @@ export const useUsuarios = () => {
     }
   }
 
-  const deleteUser = async ({ user_id, status }) => {
+  const deleteUser = async ({ user_id, status, limite, limitePorPagina  }) => {
     try {
       const { data } = await appWebApi.put(`/usuarios/updateStatusUser/${user_id}`, { status })
       console.log({ data });
@@ -265,8 +265,8 @@ export const useUsuarios = () => {
           showConfirmButton: false,
           timer: 1500
         })
-        resetTable()
-        getUsuarios();
+        //resetTable()
+        getUsuarios(limite, limitePorPagina );
       } else {
         Swal.fire({
           icon: 'error',

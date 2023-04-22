@@ -21,7 +21,7 @@ import { useSearch } from '../../hooks/seach/useSearch'
 
 //import  '../../hooks/configuraciones/getRow.js'
 //import '../../styles.css'
-let initialFormFields = { filtro: '' }
+
 export const Usuarios = () => {
   const { status, isLoading, data = [], userID } = useSelector(
     (state) => state.usuariosData,
@@ -41,6 +41,7 @@ export const Usuarios = () => {
   } = useUsuarios()
 
   const {
+    limite,
     limitePorPagina,
     setCacheUsers,
     resetFormFields: resetFormFieldsUsers,
@@ -120,7 +121,7 @@ export const Usuarios = () => {
       confirmButtonText: 'Si',
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteUser({ user_id: userID, status: false })
+        deleteUser({ user_id: userID, status: false, limite: limite, limitePorPagina: limitePorPagina })
       }
     })
   }

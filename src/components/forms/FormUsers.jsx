@@ -60,7 +60,8 @@ export const FormUsers = () => {
         } else {
             console.log('update')
             //console.log({user_id: userID, nombre, user, pass, passConfirm, status})
-            updateUser({user_id: userID, nombre, user, pass, status, limite, limitePorPagina})
+            updateUser({user_id: userID, nombre, user, pass, status,
+                 limite: limite, limitePorPagina: limitePorPagina})
             //isEditUser(false)
         }
         resetFormFieldsUSer()

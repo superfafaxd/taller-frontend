@@ -55,8 +55,8 @@ export const useAutos = () => {
             const { data } = await appWebApi.get(`/auto/getAutoByID/${auto_id}`);
             const { editAllData, msg, ok, code, results } = data;
             console.log(results)
-            const {auto_id: car_id, cli_id, cliente, marca, modelo, anio, descripcion, nota, status } = results[0]
-            setFormFieldsAuto({car_id, cli_id, cliente, marca, modelo, anio, descripcion, nota, status })
+            const { auto_id: car_id, cli_id, cliente, marca, modelo, anio, descripcion, nota, status } = results[0]
+            setFormFieldsAuto({ car_id, cli_id, cliente, marca, modelo, anio, descripcion, nota, status })
             setAutoData(`${marca} ${modelo} ${anio}`)
             // auto = `${marca} ${modelo} ${anio}`
             editAllDataCar(editAllData)
@@ -150,10 +150,10 @@ export const useAutos = () => {
         }
     }
 
-    const updateCar = async ({auto_id, cli_id, marca, modelo, anio, descripcion, nota, status, limite, limitePorPagina}) => {
+    const updateCar = async ({ auto_id, cli_id, marca, modelo, anio, descripcion, nota, status, limite, limitePorPagina }) => {
         try {
             const { data } = await appWebApi.put(`/auto/updateAuto/${auto_id}`,
-            { cli_id, marca, modelo, anio, descripcion, nota, status });
+                { cli_id, marca, modelo, anio, descripcion, nota, status });
             if (data.ok) {
                 isEditCar(false)
                 Swal.fire({
@@ -183,7 +183,7 @@ export const useAutos = () => {
         }
     }
 
-    const deleteCar = async ({auto_id, status, limite, limitePorPagina}) => {
+    const deleteCar = async ({ auto_id, status, limite, limitePorPagina }) => {
         try {
             const { data } = await appWebApi.put(`/auto/deleteAuto/${auto_id}`, { status })
             console.log({ data });
@@ -195,8 +195,8 @@ export const useAutos = () => {
                     showConfirmButton: false,
                     timer: 1500
                 })
-               // resetTable()
-               getAutos(limite, limitePorPagina)
+                // resetTable()
+                getAutos(limite, limitePorPagina)
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -250,7 +250,7 @@ export const useAutos = () => {
         }
     }
 
-    const setAutoIdStore = (autoID) =>{
+    const setAutoIdStore = (autoID) => {
         dispath(setautoID(autoID))
     }
 
@@ -260,7 +260,10 @@ export const useAutos = () => {
 
     const editAllDataCar = (opt) => { dispath(onEditAllData(opt)) }
 
-    const resetFormFieldsAutos = () => { dispath(resetFormFields()) }
+    const resetFormFieldsAutos = () => {
+        dispath(resetFormFields())
+        dispath(onResetAutoData())
+    }
 
     const onCloseModal = () => {
         closeModal()
@@ -292,6 +295,7 @@ export const useAutos = () => {
         getCarByID,
         editAllDataCar,
         getRowSeach,
-        setAutoIdStore
+        setAutoIdStore,
+        setAutoData
     }
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { NavLink, Navigate } from 'react-router-dom'
 import { Agregar, Back, Recargar } from '../../../../components/buttons/Buttons'
 import { HomeLayout } from '../../../../layouts/HomeLayout'
 import 'animate.css'
@@ -8,61 +9,71 @@ import { useModalStore } from '../../../../hooks/modal/useModalStore'
 import { useSelector } from 'react-redux'
 import { useForm } from '../../../../hooks/useForm'
 import { getDateNow } from '../../../../helpers/getDateNow'
+import { useAutos } from '../../../../hooks/home/useAutos'
+import { useServices } from '../../../../hooks/home/services/useServices'
+import { usePaginacion } from '../../../../hooks/paginacion/usePaginacion'
 
 export const Service = () => {
- const {dateNow } = getDateNow()
+  const { dateNow } = getDateNow()
+  const { resetFormFieldsAutos } = useAutos()
+  const { setFormFieldsService,resetFormFieldsService, editServise, registerService, navigate, updateService } = useServices() //use services
+  const { limite, limitePorPagina } = usePaginacion()
   const { initialFormFields, isLoading, autoID, autoData } = useSelector(
     (state) => state.autosData,
   )
-  const { initialFormFields: initialFormFieldsService, isEdit,fecha_ingreso } = useSelector(state => state.service)
+  const {
+    initialFormFields: initialFormFieldsService,
+    statusService,
+    isEdit,
+    fecha_ingreso,
+  } = useSelector((state) => state.service)
 
-  const { 
+  const {
     car_id,
     cli_id,
     cliente,
-   /*  marca,
+    /*  marca,
     modelo,
     anio,
     descripcion,
     nota,
     status, */
-    onInputChange
-  } = useForm(initialFormFields)//form para datos de auto
+    onInputChange,
+  } = useForm(initialFormFields) //form para datos de auto
 
-  const { motivo, total, onInputChange: onInputChangeService } = useForm(initialFormFieldsService)
+  const { serv_id, motivo, total, onInputChange: onInputChangeService } = useForm(
+    initialFormFieldsService,
+  )
 
- 
   const [date_in, setDate_in] = useState('0000-00-00') //date income
-  const [dateDelivery, setDateDelivery] = useState('0000-00-00') 
+  const [dateDelivery, setDateDelivery] = useState('0000-00-00')
   const [enableDate, setEnableDate] = useState(true)
   const [status, setStatus] = useState(false)
 
   useEffect(() => {
-    
-  if(!isEdit){
-    console.log('fecha de ingreso desde el sistema')
-    setDate_in(dateNow)
-  }else{
-    setDate_in(fecha_ingreso)
-    console.log('fecha de ingreso desde el store')
-  }
-   
+    if (!isEdit) {
+      console.log('get system date')
+      setDate_in(dateNow)
+      setDateDelivery(dateNow)
+    } else {
+      setDate_in(fecha_ingreso)
+      //setDateDelivery(fe)
+      setStatus(statusService)
+      console.log('fecha desde el store')
+    }
   }, [])
 
   useEffect(() => {
-    if(status === '3'){
+    if (status === '3') {
       setEnableDate(false)
       setDateDelivery(dateNow)
       console.log(`el status es terminado ${status}`)
-    }else{
+    } else {
       setEnableDate(true)
       setDateDelivery('0000-00-00')
     }
   }, [status])
-  
-  
-  
- 
+
   const { openModal, openModalSearchCar } = useModalStore()
 
   const searchCar = () => {
@@ -72,15 +83,59 @@ export const Service = () => {
 
   const onSubmit = (event) => {
     event.preventDefault()
-    if(!status || status == 'false'){
-      Swal.fire(
-        'Selecciona el status de el auto',
-        '',
-        'info'
-      )
+    if (!status || status == 'false') {
+      Swal.fire('Selecciona el status de el auto', '', 'info')
       return
     }
-    console.log({car_id, cli_id, motivo, total, date_in, dateDelivery, status})
+    console.log({
+      car_id,
+      cli_id,
+      motivo,
+      total,
+      dateNow,
+      date_in,
+      dateDelivery,
+      status,
+    })
+    if(!isEdit){
+      console.log('new service')      
+      registerService({
+        auto_id: car_id,
+        cli_id: cli_id,
+        motivo: motivo,
+        total: total,
+        fecha: dateNow,
+        fecha_ingreso: date_in,
+        fecha_entrega: dateDelivery,
+        status: status,
+        limite: limite,
+        limitePorPagina: limitePorPagina
+      })
+    }else{
+      console.log('update service')
+      updateService({
+        serv_id: serv_id, 
+        motivo: motivo, 
+        total: total, 
+        fecha_entrega: dateDelivery, 
+        status: status
+      })
+    }
+   handleReset()
+   navigate(-1)
+
+  }
+
+
+  const handleReset = () => {
+    resetFormFieldsAutos()
+     setStatus(false)
+     setDate_in(dateNow)
+     resetFormFieldsService()
+    if(isEdit){
+      editServise(false)//
+    }
+    
   }
 
   return (
@@ -95,23 +150,25 @@ export const Service = () => {
 
               <div className="d-flex justify-content-star gap-3">
                 <div className="d-flex  justify-content-between">
-                  <button
-                    type="button"
-                    className="border-0 btn btn-danger m-1"
-                    //onClick={onCancel}
+                  <NavLink
+                    // type="button"
+                     className="border-0 btn btn-danger m-1"
+                    to='/verServicios'
+                    onClick={ () => { handleReset() } }
                   >
                     <div className="d-flex  justify-content-between">
                       <span className="material-symbols-outlined">cancel</span>
                       <span className="d-none d-sm-block"> Cancelar</span>
                     </div>
-                  </button>
+                  </NavLink>
                 </div>
+
 
                 <div className="d-flex  justify-content-between">
                   <button
                     type="button"
                     className="border-0 btn btn-info m-1"
-                    onClick={onSubmit}
+                    onClick={handleReset}
                   >
                     <div className="d-flex  justify-content-between">
                       <span className="material-symbols-outlined">refresh</span>
@@ -138,7 +195,7 @@ export const Service = () => {
                 <div className="col-xl-4 col-lg-4 col-md-4 form-group mb-2">
                   <label className="text-primary"> Cliente</label>
                   <div className="d-flex justify-content-start">
-                    <span className="input-group-text">{ cli_id} </span>
+                    <span className="input-group-text">{cli_id} </span>
                     <input
                       type="text"
                       className="form-control"
@@ -146,9 +203,9 @@ export const Service = () => {
                       required
                       disabled
                       name="cliente"
-                     value={cliente}
+                      value={cliente}
                       onChange={onInputChange}
-                    /> 
+                    />
                   </div>
                 </div>
                 <div className="col-xl-8 col-lg-8 col-md-8 form-group">
@@ -186,16 +243,16 @@ export const Service = () => {
                   </label>
                   <select
                     className="form-select"
-                   
-                    name='status'
+                    name="status"
                     value={status}
-                    onChange={ (e) => setStatus(e.target.value) }
+                    onChange={(e) => setStatus(e.target.value)}
                     //onChange={onInputChangeService}
                   >
                     <option value={false}>Seleccionar</option>
                     <option value="1">En Espera (aun no se empieza)</option>
                     <option value="2">En proceso (Ya ha sido Empezado)</option>
                     <option value="3">Terminado</option>
+                    <option value="4">CANCELADO</option>
                     {/*  <option value="4">Garantia</option> */}
                   </select>
                 </div>
@@ -210,8 +267,8 @@ export const Service = () => {
                     required
                     //disabled={!editAllData}
                     name="fecha_ingreso"
-                     value={date_in}
-                     onChange={ (e) =>setDate_in(e.target.value) }
+                    value={date_in}
+                    onChange={(e) => setDate_in(e.target.value)}
                   />
                 </div>
 
@@ -226,22 +283,25 @@ export const Service = () => {
                     required
                     disabled={enableDate}
                     name="fecha_entrega"
-                     value={dateDelivery}
-                     onChange={ (e) => setDateDelivery(e.target.value)}
+                    value={dateDelivery}
+                    onChange={(e) => setDateDelivery(e.target.value)}
                   />
                 </div>
               </div>
               {/* fin de status y fechas */}
 
               <div className="form-group mb-1">
-                <label className="text-primary">Motivo</label>
+                <label className="text-primary">
+                  Motivo<span className="text-danger">*</span>
+                </label>
                 <textarea
                   placeholder="Motivo de el Servicio"
                   className="form-control"
                   aria-label="With textarea"
+                  required
                   name="motivo"
-                   value={motivo}
-                   onChange={onInputChangeService}
+                  value={motivo}
+                  onChange={onInputChangeService}
                 ></textarea>
               </div>
 
@@ -249,7 +309,14 @@ export const Service = () => {
 
               {/* -----------------------TERMINAN DATOS DE Servicio------------------------------------ */}
             </form>
+            {
+            isEdit?
             <Product />
+            :
+            <div className="alert alert-warning" role="alert">
+              <strong>Guarda cambios para agregar los detalles de el servicio</strong>
+            </div>
+            }
           </div>
         </div>
         {/* <section>

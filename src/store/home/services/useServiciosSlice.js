@@ -5,7 +5,7 @@ export const useServiciosSlice = createSlice({
     name: 'servicio',
     initialState: {
         isLoading: false,
-        status: 'sin-data',
+        statusData: 'sin-data',
         data: [],
         initialFormFields: {
             serv_id: '',
@@ -20,13 +20,13 @@ export const useServiciosSlice = createSlice({
         },
         fecha_ingreso: '2000-10-20', //(aa-mm-dd)
         fecha_entrega: '',
-        status: '',
+        statusService: '',
         isEdit: false
 
     },
     reducers: {
         onloading: (state, { payload }) => {
-            state.isLoading = true
+            state.isLoading = payload
         },
         onLoadingServices: (state, { payload }) => {
 
@@ -38,7 +38,7 @@ export const useServiciosSlice = createSlice({
                     state.data.push(serv);
                 }
             });
-            state.status = 'data-cargada'
+            state.statusData = 'data-cargada'
             state.isLoading = false
         },
         onResetFormFieldsService: (state) => {
@@ -47,17 +47,23 @@ export const useServiciosSlice = createSlice({
                 auto_id: '',
                 cli_id: '',
                 motivo: '',
-                total: '',
+                total: 0.00,
                 /*   fecha_ingreso: '',
                   fecha_entrega: '', */
-                status: ''
+                //status: ''
             }
         },
         onSetFormFieldsService: (state, { payload }) => {
             state.initialFormFields = payload
         },
-        onEditService: (state) => {
-            state.isEdit = !isEdit
+        onEditService: (state, {payload}) => {
+            state.isEdit = payload
+        },
+        onResetData: (state) => {
+            state.data = []
+        },
+        onSetStatus: (state, {payload}) =>{
+            state.statusService = payload
         }
     }
 });
@@ -69,4 +75,6 @@ export const {
     setFormFieldsService,
     onSetFormFieldsService,
     onEditService,
+    onResetData,
+    onSetStatus,
 } = useServiciosSlice.actions;

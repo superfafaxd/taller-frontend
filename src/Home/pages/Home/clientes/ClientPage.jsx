@@ -199,11 +199,11 @@ export const ClientPage = () => {
                   <td>{cli.nombre}</td>
                   <td>{cli.domicilio}</td>
                   <td>{cli.celular}</td>
-                  <td style={{width: '200px'}} >
+                  <td className='text-center' style={{width: '200px'}} >
                     <button onClick={() => { onEditClient(cli.cli_id) }}
-                    className="btn btn-info btn-sm me-1" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">edit</span></button>
+                    className="btn btn-info btn-sm me-1 mb-1" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">edit</span></button>
                     <button onClick={() => { onDeleteClient(cli.cli_id) }}
-                    className="btn btn-danger btn-sm" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">delete</span></button>
+                    className="btn btn-danger btn-sm mb-1" data-title="Edit" data-toggle="modal" data-target="#edit" ><span className="material-symbols-outlined">delete</span></button>
                   </td>
                   {/* <td>{cli.nota}</td> */}
                 </tr>
@@ -219,23 +219,6 @@ export const ClientPage = () => {
         modulo={'clientes'}
       />
 
-      {/*       <div class="list-group" id="list-tab" role="tablist">
-              {data.map((cli) => {
-              return (
-                <tr key={cli.cli_id}>
-                  <a class="list-group-item list-group-item-action" data-bs-toggle="list"  role="tab" >
-                  <td scope="row">{cli.cli_id}</td>
-                  <td>{cli.nombre}</td>
-                  <td>{cli.domicilio}</td>
-                  <td>{cli.celular}</td>
-                </a>
-                </tr>
-              )
-            })}
-          </div> */}
-      {/* <footer className='fixed-bottom'>
-            <h1>footer</h1>
-          </footer> */}
     </HomeLayout>
   )
 }
